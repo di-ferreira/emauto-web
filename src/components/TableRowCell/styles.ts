@@ -2,6 +2,7 @@ import styled from 'styled-components';
 
 export const TableCell = styled.td`
   padding: 1.2rem;
+  min-width: 14rem;
   font-size: 1.5rem;
   text-align: center;
   color: ${(props) => props.theme.colors.onSurface};

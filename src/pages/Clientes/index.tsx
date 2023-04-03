@@ -1,5 +1,5 @@
 import React, { useEffect, useState } from 'react';
-import { iCliente, iColumnType, iEmpresa, iSolicitante } from '../../@types';
+import { iCliente, iColumnType } from '../../@types';
 import Table from '../../components/Table';
 import {
   Container,
@@ -27,33 +27,13 @@ import useModal from '../../hooks/useModal';
 import useSelect, { iOption } from '../../hooks/UseSelect';
 import Button from '../../components/Button';
 import { InputCustom } from '../../components/InputCustom';
-import {
-  useMutation,
-  useQuery,
-  useQueryClient,
-  useIsFetching,
-} from 'react-query';
 import { CustomSwitch } from '../../components/CustomSwitch';
-import { useClientes } from '../../hooks/useClientes';
+import useClientes from '../../hooks/useClientes';
 
 export const Clientes: React.FC = () => {
-  const { GetClientes } = useClientes();
+  const { GetClientes, data, isLoading } = useClientes();
 
   const [cliente, setCliente] = useState<iCliente>({} as iCliente);
-
-  const { data, isLoading } = useQuery('cliente-list', GetClientes);
-
-  const queryClient = useQueryClient();
-
-  // const MutateEdit = useMutation(
-  //   () => UpdateSolicitante(solicitante ? solicitante : ({} as iSolicitante)),
-  //   {
-  //     onSuccess: () => {
-  //       queryClient.invalidateQueries('solicitantes-list');
-  //       showModal();
-  //     },
-  //   }
-  // );
 
   const { Modal, showModal } = useModal();
 
@@ -69,6 +49,10 @@ export const Clientes: React.FC = () => {
     { label: 'BAIRRO', value: 'bairro' },
     { label: 'CIDADE', value: 'cidade' },
   ];
+
+  useEffect(() => {
+    GetClientes();
+  }, []);
 
   const LoadSolicitante = (value: iCliente) => {
     setCliente(value);
@@ -97,12 +81,12 @@ export const Clientes: React.FC = () => {
 
   const headers: iColumnType<iCliente>[] = [
     {
-      key: 'ID',
+      key: 'Cliente',
       title: 'ID',
       width: 200,
     },
     {
-      key: 'NOME',
+      key: 'Nome',
       title: 'NOME',
       width: 200,
     },
@@ -289,7 +273,7 @@ export const Clientes: React.FC = () => {
       )}
       {isLoading && <Loading />}
       {data && !isLoading && <Table columns={headers} data={data} />}
-      {!data && !isLoading && <p>Não há registros</p>}
+      {data.length === 0 && !isLoading && <p>Não há registros</p>}
     </Container>
   );
 };

@@ -1,7 +1,8 @@
 import { iTableProps } from '../../@types';
 import TableHeader from '../TableHeader';
+import { TablePagination } from '../TablePagination';
 import TableRow from '../TableRow';
-import { TableWrapper } from './styles';
+import { TableWrapper, TableBody } from './styles';
 
 function Table<T>({ data, columns }: iTableProps<T>): JSX.Element {
   return (
@@ -9,9 +10,12 @@ function Table<T>({ data, columns }: iTableProps<T>): JSX.Element {
       <thead>
         <TableHeader columns={columns} />
       </thead>
-      <tbody>
+      <TableBody>
         <TableRow data={data} columns={columns} />
-      </tbody>
+      </TableBody>
+      <tfoot>
+        <TablePagination />
+      </tfoot>
     </TableWrapper>
   );
 }

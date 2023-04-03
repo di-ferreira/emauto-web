@@ -1,5 +1,5 @@
 import React from 'react';
-import Select, { SingleValue, ActionMeta } from 'react-select';
+import Select, { SingleValue, ActionMeta, MenuPlacement } from 'react-select';
 import { Container, Label } from './styles';
 import { Black, Dark, DarkRed, Light, Primary, Secondary } from '../../colors';
 import { useTheme } from '../useTheme';
@@ -7,10 +7,11 @@ import { HEXToRGB } from '../../utils';
 
 export interface iOption {
   label: string;
-  value: string;
+  value: string | number;
 }
 interface iCustomSelect {
   label?: string;
+  menuPosition?: MenuPlacement;
   options: iOption[];
   onChange?: (
     newValue: SingleValue<iOption>,
@@ -20,6 +21,7 @@ interface iCustomSelect {
 
 const RenderSelect: React.FC<iCustomSelect> = ({
   label,
+  menuPosition,
   options,
   onChange,
 }) => {
@@ -31,6 +33,7 @@ const RenderSelect: React.FC<iCustomSelect> = ({
         onChange={onChange}
         options={options}
         defaultValue={options[0]}
+        menuPlacement={menuPosition}
         styles={{
           control: (base, state) => ({
             ...base,

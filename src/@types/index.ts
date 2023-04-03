@@ -25,6 +25,13 @@ export interface iTableProps<T> {
   columns: iColumnType<T>[];
 }
 
+export interface iFilter<T> {
+  filter?: { key: keyof T; value: string | number };
+  orderBy?: keyof T;
+  top?: number;
+  skip?: number;
+}
+
 export interface iModalRender {
   Title: string;
   OnClose: () => void;
