@@ -1,5 +1,5 @@
-import React, { useEffect, useState } from 'react';
-import { iCliente, iColumnType } from '../../@types';
+import React, { useCallback, useEffect, useState } from 'react';
+import { iCliente, iColumnType, iFilter, iOption } from '../../@types';
 import Table from '../../components/Table';
 import {
   Container,
@@ -24,15 +24,33 @@ import {
 import { Loading } from '../../components/Loading';
 import { Icon } from '../../components/Icon';
 import useModal from '../../hooks/useModal';
-import useSelect, { iOption } from '../../hooks/UseSelect';
+import useSelect from '../../hooks/UseSelect';
 import Button from '../../components/Button';
 import { InputCustom } from '../../components/InputCustom';
 import { CustomSwitch } from '../../components/CustomSwitch';
 import useClientes from '../../hooks/useClientes';
 
 export const Clientes: React.FC = () => {
-  const { GetClientes, data, isLoading } = useClientes();
+  const { GetClientes } = useClientes();
 
+  const [ClienteList, setClienteList] = useState<iCliente[]>([]);
+
+  /* PAGINAÇÃO */
+  const [RegistersPerPage, setRegistersPerPage] = useState<number>(15);
+
+  const [CurrentPage, setCurrentPage] = useState<number>(1);
+
+  const [SkipPerPage, setSkipPerPage] = useState<number>(0);
+
+  const [TotalPages, setTotalPages] = useState<number>(1);
+
+  /* STATUS LISTA CLIENTES */
+
+  const [ErrorMessage, setErrorMessage] = useState<string>('');
+
+  const [IsLoading, setIsLoading] = useState<boolean>(false);
+
+  /* OUTROS */
   const [cliente, setCliente] = useState<iCliente>({} as iCliente);
 
   const { Modal, showModal } = useModal();
@@ -51,20 +69,32 @@ export const Clientes: React.FC = () => {
   ];
 
   useEffect(() => {
-    GetClientes();
+    ListClientes({ top: RegistersPerPage });
   }, []);
 
-  const LoadSolicitante = (value: iCliente) => {
-    setCliente(value);
-    showModal();
+  const ListClientes = async (filter?: iFilter<iCliente>) => {
+    setErrorMessage('');
+    try {
+      setIsLoading(true);
+      const Data = await GetClientes(filter);
+      console.log(Data);
+      setClienteList(Data.Dados);
+      setTotalPages(Math.ceil(Data.Qtd_Registros / RegistersPerPage));
+    } catch (error: any) {
+      console.log(error.message);
+      setErrorMessage(error.message);
+    } finally {
+      setIsLoading(false);
+    }
   };
 
-  // const onSaveCliente = (e: React.FormEvent) => {
-  //   e.preventDefault();
-  //   MutateEdit.mutate();
-  //   ClearFields();
-  //   showModal();
-  // };
+  const ChangeRowsPerPage = (value: iOption) => {
+    setRegistersPerPage((oldValue) => {
+      oldValue = Number(value.value);
+      return oldValue;
+    });
+    ListClientes({ top: Number(value.value), orderBy: 'CLIENTE' });
+  };
 
   const OnChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
     const { value, name } = e.target;
@@ -81,12 +111,12 @@ export const Clientes: React.FC = () => {
 
   const headers: iColumnType<iCliente>[] = [
     {
-      key: 'Cliente',
+      key: 'CLIENTE',
       title: 'ID',
       width: 200,
     },
     {
-      key: 'Nome',
+      key: 'NOME',
       title: 'NOME',
       width: 200,
     },
@@ -96,17 +126,17 @@ export const Clientes: React.FC = () => {
       width: 200,
     },
     {
-      key: 'Endereco',
+      key: 'ENDERECO',
       title: 'ENDEREÇO',
       width: 200,
     },
     {
-      key: 'Bairro',
+      key: 'BAIRRO',
       title: 'BAIRRO',
       width: 200,
     },
     {
-      key: 'Cidade',
+      key: 'CIDADE',
       title: 'CIDADE',
       width: 200,
     },
@@ -170,7 +200,7 @@ export const Clientes: React.FC = () => {
         </SwitchContainer>
       </FilterContainer>
       {Modal && cliente && (
-        <Modal Title={'Cliente - ' + cliente.Nome}>
+        <Modal Title={'Cliente - ' + cliente.NOME}>
           {/* <FormEditCliente>
             <FormEditClienteColumn>
               <FormEditClienteRow>
@@ -271,9 +301,21 @@ export const Clientes: React.FC = () => {
           </FormEditCliente> */}
         </Modal>
       )}
-      {isLoading && <Loading />}
-      {data && !isLoading && <Table columns={headers} data={data} />}
-      {data.length === 0 && !isLoading && <p>Não há registros</p>}
+      {IsLoading && <Loading />}
+      {ClienteList && !IsLoading && (
+        <Table
+          messageNoData={ErrorMessage}
+          columns={headers}
+          data={ClienteList}
+          CurrentPage={CurrentPage}
+          TotalPages={TotalPages}
+          RowsPerPage={RegistersPerPage}
+          onChange={ChangeRowsPerPage}
+        />
+      )}
+      {ClienteList.length === 0 && !IsLoading && ErrorMessage === '' && (
+        <p>Não há registros</p>
+      )}
     </Container>
   );
 };

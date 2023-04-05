@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect, useState } from 'react';
 
 import { Container, ContainerButtons, ContainerInfo, Label } from './styles';
 import Button from '../Button';
@@ -8,9 +8,15 @@ import {
   faAngleLeft,
   faAngleRight,
 } from '@fortawesome/free-solid-svg-icons';
-import useSelect, { iOption } from '../../hooks/UseSelect';
+import useSelect from '../../hooks/UseSelect';
+import { iOption, iTablePagination } from '../../@types';
 
-export const TablePagination: React.FC = () => {
+export const TablePagination: React.FC<iTablePagination> = ({
+  CurrentPage,
+  TotalPages,
+  RowsPerPage,
+  onChange,
+}) => {
   const { Select } = useSelect();
   const OptionsSelect: iOption[] = [
     { label: '15', value: 15 },
@@ -18,6 +24,13 @@ export const TablePagination: React.FC = () => {
     { label: '50', value: 50 },
     { label: '100', value: 100 },
   ];
+
+  const [CurrentOption, setCurrentOption] = useState<iOption>(OptionsSelect[1]);
+
+  useEffect(() => {
+    let NewOption = OptionsSelect.find((opt) => opt.value === RowsPerPage);
+    setCurrentOption(NewOption ? NewOption : OptionsSelect[0]);
+  }, [RowsPerPage]);
   /*
   top = qtd registros por página
   skip = qtd de registro "pulados"
@@ -27,43 +40,50 @@ export const TablePagination: React.FC = () => {
   return (
     <Container>
       <ContainerInfo>
-        <Label>qtd página</Label>
+        <Label>Registros por página</Label>
         <Select
+          value={CurrentOption}
           menuPosition='top'
           options={OptionsSelect}
-          onChange={(SingleValue) => console.log(SingleValue)}
+          onChange={(SingleValue) =>
+            SingleValue &&
+            onChange({
+              label: SingleValue.label,
+              value: SingleValue.value,
+            })
+          }
         />
+        <Label>
+          <strong>{CurrentPage}</strong> de <strong>{TotalPages}</strong>
+        </Label>
       </ContainerInfo>
       <ContainerButtons>
         <Button
           Icon={faAngleDoubleLeft}
           Title='Primeiro'
           Type='secondary'
-          Height='75%'
+          Height='60%'
           Width='7rem'
         />
         <Button
           Icon={faAngleLeft}
           Title='Anterior'
           Type='secondary'
-          Height='75%'
+          Height='60%'
           Width='7rem'
         />
-        <Label>
-          página atual <strong>1</strong>
-        </Label>
         <Button
           Icon={faAngleRight}
           Title='Próximo'
           Type='secondary'
-          Height='75%'
+          Height='60%'
           Width='7rem'
         />
         <Button
           Icon={faAngleDoubleRight}
           Title='Último'
           Type='secondary'
-          Height='75%'
+          Height='60%'
           Width='7rem'
         />
       </ContainerButtons>

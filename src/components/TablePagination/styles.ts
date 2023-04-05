@@ -1,12 +1,11 @@
 import styled from 'styled-components';
-import { Black, Light } from '../../colors';
 
 export const Container = styled.div`
   display: flex;
   justify-content: space-between;
   align-items: center;
   width: 100%;
-  height: 4.5rem;
+  height: 9vh;
   color: ${(props) => props.theme.colors.background};
   background-color: ${(props) => props.theme.colors.onSurface};
   border-top: solid 1px ${(props) => props.theme.colors.secondary};

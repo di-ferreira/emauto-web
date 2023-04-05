@@ -20,7 +20,20 @@ export interface iColumnType<T> {
   action?: iButtonAction<T>[];
 }
 
-export interface iTableProps<T> {
+export interface iOption {
+  label: string;
+  value: string | number;
+}
+
+export interface iTablePagination {
+  CurrentPage: number;
+  TotalPages: number;
+  RowsPerPage: number;
+  onChange: (value: iOption) => void;
+}
+
+export interface iTableProps<T> extends iTablePagination {
+  messageNoData?: string;
   data: T[];
   columns: iColumnType<T>[];
 }
@@ -120,24 +133,86 @@ export interface iEmpresa {
 }
 
 export interface iCliente {
-  Cliente: number;
-  Nome: string;
-  Apelido: string;
-  Endereco: string;
-  Endereco_Num: string;
-  Endereco_Cpl: string;
-  Bairro: string;
-  Cidade: string;
+  CLIENTE: number;
+  NOME: string;
+  ENDERECO: string;
+  BAIRRO: string;
+  CIDADE: string;
   UF: string;
-  Cep: string;
+  CEP: string;
   CIC: string;
-  Insc_Ident: string;
-  Identidade: string;
-  Inscricao_M: string;
-  DT_Cadastro: string;
-  DT_Nascimento: string;
-  Telefone: string;
-  Email: string;
-  Vendedor: number;
-  Vendedor_Interno: number;
+  DT_CADASTRO: string;
+  DT_NASCIMENTO: string;
+  DT_ULT_COMPRA: string;
+  INSC_IDENT: string | null;
+  TELEFONE: string;
+  FAX: string | null;
+  EMAIL: string | null;
+  BLOQUEADO: string;
+  MOTIVO: string | null;
+  P1_DE: number;
+  P1_ATE: number;
+  P1_VENCIMENTO: number;
+  P2_DE: number;
+  P2_ATE: number;
+  P2_VENCIMENTO: number;
+  USARLIMITE: string;
+  LIMITE: number;
+  DESCONTO: string;
+  OBS: string | null;
+  VALOR_DESCONTO: number;
+  ECF: string;
+  BOLETO: string;
+  CARTEIRA: string;
+  ROTA: number;
+  TAXA_ENTREGA: string | null;
+  CLASSIFICACAO: number;
+  FRETE_POR_CONTA: string | null;
+  FRETE_TIPO: string | null;
+  ACRESCIMO_NOTA: number;
+  VENDEDOR: number;
+  OS: string;
+  TIPO_FAT: string | null;
+  MESSAGEM_FINANCEIRO: string | null;
+  ENDERECO_NUM: string;
+  ENDERECO_CPL: string | null;
+  ENDERECO_COD_MUN: number;
+  ENDERECO_COD_UF: number;
+  Tabela: string;
+  ATUALIZAR: string;
+  CONDICAO_PAGAMENTO: string | null;
+  APELIDO: string | null;
+  EMAIL_FINANCEIRO: string | null;
+  DESCONTO_AVISTA: string | null;
+  TRANSPORTADORA: string | null;
+  ID_CONDICAO: string | null;
+  FROTA: string | null;
+  IDENTIDADE: string | null;
+  MENSAGEM_FINANCEIRO: string | null;
+  GRUPO: number;
+  END_ENTREGA: string | null;
+  INSCRICAO_M: string | null;
+  LIMITE_CHEQUE: string | null;
+  META: string | null;
+  SOMENTE_NFE: string;
+  VENDEDOR_INTERNO: string | null;
+  DATA_ATUALIZACAO: string;
+  GEO_LAT: string | null;
+  GEO_LNG: string | null;
+  DDA: string;
+  V100: string | null;
+  TIPO_CLIENTE: string;
+  AtualizarRegiao: string | null;
+  SENHA: string | null;
+  EMAIL_VENDA_DIRETA: string | null;
+  SENHA_VENDA_DIRETA: string | null;
+  PERC_VENDA_DIRETA: string | null;
+  ConsumidorFinal: string | null;
+  DESCONTO_BOLETO: string | null;
+  REGIAO: string | null;
+  OFICINA: string | null;
+  'Telefones@xdata.proxy': string;
+  'FollowUpList@xdata.proxy': string;
+  'AgendamentosList@xdata.proxy': string;
+  'PendenciasList@xdata.proxy': string;
 }

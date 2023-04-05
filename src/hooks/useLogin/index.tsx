@@ -101,7 +101,6 @@ export const LoginProvider: React.FC<{ children: React.ReactNode }> = ({
         api.defaults.headers.common.Authorization = 'bearer ' + userLogin.value;
       })
       .catch((error) => {
-        console.log(error);
         if (!error?.response) {
           setErrorMsg('Sem resposta do servidor');
         } else if (error.response?.status === 400) {

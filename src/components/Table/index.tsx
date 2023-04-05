@@ -2,10 +2,20 @@ import { iTableProps } from '../../@types';
 import TableHeader from '../TableHeader';
 import { TablePagination } from '../TablePagination';
 import TableRow from '../TableRow';
-import { TableWrapper, TableBody } from './styles';
+import { TableWrapper, TableBody, MessageNoData } from './styles';
 
-function Table<T>({ data, columns }: iTableProps<T>): JSX.Element {
-  return (
+function Table<T>({
+  data,
+  columns,
+  CurrentPage,
+  TotalPages,
+  RowsPerPage,
+  onChange,
+  messageNoData,
+}: iTableProps<T>): JSX.Element {
+  return messageNoData !== '' ? (
+    <MessageNoData>{messageNoData}</MessageNoData>
+  ) : (
     <TableWrapper>
       <thead>
         <TableHeader columns={columns} />
@@ -14,7 +24,12 @@ function Table<T>({ data, columns }: iTableProps<T>): JSX.Element {
         <TableRow data={data} columns={columns} />
       </TableBody>
       <tfoot>
-        <TablePagination />
+        <TablePagination
+          CurrentPage={CurrentPage}
+          TotalPages={TotalPages}
+          RowsPerPage={RowsPerPage}
+          onChange={onChange}
+        />
       </tfoot>
     </TableWrapper>
   );

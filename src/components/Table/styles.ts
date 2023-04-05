@@ -11,7 +11,7 @@ export const TableBody = styled.tbody`
   display: block;
   margin-top: 1rem;
   width: 100%;
-  height: 55vh;
+  height: 53vh;
   overflow: hidden auto;
 
   ::-webkit-scrollbar {
@@ -25,3 +25,10 @@ export const TableBody = styled.tbody`
   }
 `;
 
+export const MessageNoData = styled.p`
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+`;
