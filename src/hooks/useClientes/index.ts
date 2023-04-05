@@ -31,52 +31,6 @@ const CreateFilter = (filter: iFilter<iCliente>): string => {
   return ResultRoute;
 };
 
-// const GetClientes = (
-//   state: iUseCliente,
-//   filter?: iFilter<iCliente>
-// ): iUseCliente => {
-//   let dataCliente: iCliente[] = [];
-//   state.ErrorMessage = '';
-//   state.isError = false;
-//   state.isLoading = true;
-//   state.data = [];
-//   state.TotalRegisters = 0;
-//   state.RegistersPerPage = filter?.top ? filter.top : 15;
-//   state.CurrentPage =
-//     filter?.top && filter?.skip ? filter.skip / filter.top : 1;
-
-//   let NewFilter: iFilter<iCliente> = {
-//     ...filter,
-//     skip: (state.CurrentPage - 1) * state.RegistersPerPage,
-//   };
-
-//   api
-//     .get(
-//       `${ROUTE_CLIENTE}Listar${
-//         filter ? CreateFilter(NewFilter) : CreateFilter({} as iFilter<iCliente>)
-//       }&$expand=Telefones`
-//     )
-//     .then(async (response) => {
-//       let data: any;
-//       data = await response.data;
-//       state.TotalRegisters = data.Qtd_Registros;
-//       state.TotalPages = Math.ceil(
-//         state.TotalRegisters / state.RegistersPerPage
-//       );
-//       dataCliente = data.Dados;
-//       state.data = dataCliente;
-//     })
-//     .catch((error) => {
-//       state.ErrorMessage = error.message;
-//       state.isError = true;
-//     })
-//     .finally(() => {
-//       state.isLoading = false;
-//     });
-//   console.log(state);
-//   return state;
-// };
-
 const GetClientes = async (
   filter?: iFilter<iCliente>
 ): Promise<iDataCliente> => {
@@ -85,7 +39,7 @@ const GetClientes = async (
       filter ? `${CreateFilter(filter)}&` : '?'
     }$expand=Telefones`
   );
-
+  console.log(response);
   return response.data;
 };
 

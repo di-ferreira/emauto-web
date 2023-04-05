@@ -16,6 +16,10 @@ export const TablePagination: React.FC<iTablePagination> = ({
   TotalPages,
   RowsPerPage,
   onChange,
+  onNextPage,
+  onFirstPage,
+  onLastPage,
+  onPrevPage,
 }) => {
   const { Select } = useSelect();
   const OptionsSelect: iOption[] = [
@@ -64,6 +68,8 @@ export const TablePagination: React.FC<iTablePagination> = ({
           Type='secondary'
           Height='60%'
           Width='7rem'
+          disabled={CurrentPage === 1 ? true : false}
+          onclick={() => onFirstPage()}
         />
         <Button
           Icon={faAngleLeft}
@@ -71,6 +77,8 @@ export const TablePagination: React.FC<iTablePagination> = ({
           Type='secondary'
           Height='60%'
           Width='7rem'
+          disabled={CurrentPage === 1 ? true : false}
+          onclick={() => onPrevPage()}
         />
         <Button
           Icon={faAngleRight}
@@ -78,6 +86,8 @@ export const TablePagination: React.FC<iTablePagination> = ({
           Type='secondary'
           Height='60%'
           Width='7rem'
+          disabled={CurrentPage === TotalPages ? true : false}
+          onclick={() => onNextPage()}
         />
         <Button
           Icon={faAngleDoubleRight}
@@ -85,6 +95,8 @@ export const TablePagination: React.FC<iTablePagination> = ({
           Type='secondary'
           Height='60%'
           Width='7rem'
+          disabled={CurrentPage === TotalPages ? true : false}
+          onclick={() => onLastPage()}
         />
       </ContainerButtons>
     </Container>

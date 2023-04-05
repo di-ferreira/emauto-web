@@ -12,6 +12,10 @@ function Table<T>({
   RowsPerPage,
   onChange,
   messageNoData,
+  onNextPage,
+  onFirstPage,
+  onLastPage,
+  onPrevPage,
 }: iTableProps<T>): JSX.Element {
   return messageNoData !== '' ? (
     <MessageNoData>{messageNoData}</MessageNoData>
@@ -29,6 +33,10 @@ function Table<T>({
           TotalPages={TotalPages}
           RowsPerPage={RowsPerPage}
           onChange={onChange}
+          onNextPage={onNextPage}
+          onFirstPage={onFirstPage}
+          onLastPage={onLastPage}
+          onPrevPage={onPrevPage}
         />
       </tfoot>
     </TableWrapper>

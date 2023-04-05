@@ -29,6 +29,10 @@ export interface iTablePagination {
   CurrentPage: number;
   TotalPages: number;
   RowsPerPage: number;
+  onFirstPage: () => void;
+  onNextPage: () => void;
+  onPrevPage: () => void;
+  onLastPage: () => void;
   onChange: (value: iOption) => void;
 }
 

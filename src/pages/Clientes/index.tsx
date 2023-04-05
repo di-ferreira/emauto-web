@@ -40,9 +40,16 @@ export const Clientes: React.FC = () => {
 
   const [CurrentPage, setCurrentPage] = useState<number>(1);
 
-  const [SkipPerPage, setSkipPerPage] = useState<number>(0);
-
   const [TotalPages, setTotalPages] = useState<number>(1);
+
+  const SkipPage = (
+    NextPage: boolean = true,
+    RegPerPage: number = RegistersPerPage
+  ): number => {
+    let CurPage = NextPage ? CurrentPage + 1 : CurrentPage - 1;
+    const Skip = RegPerPage * CurPage - RegPerPage;
+    return Skip;
+  };
 
   /* STATUS LISTA CLIENTES */
 
@@ -69,7 +76,10 @@ export const Clientes: React.FC = () => {
   ];
 
   useEffect(() => {
-    ListClientes({ top: RegistersPerPage });
+    ListClientes({
+      top: RegistersPerPage,
+      orderBy: 'CLIENTE',
+    });
   }, []);
 
   const ListClientes = async (filter?: iFilter<iCliente>) => {
@@ -77,11 +87,9 @@ export const Clientes: React.FC = () => {
     try {
       setIsLoading(true);
       const Data = await GetClientes(filter);
-      console.log(Data);
       setClienteList(Data.Dados);
       setTotalPages(Math.ceil(Data.Qtd_Registros / RegistersPerPage));
     } catch (error: any) {
-      console.log(error.message);
       setErrorMessage(error.message);
     } finally {
       setIsLoading(false);
@@ -93,7 +101,50 @@ export const Clientes: React.FC = () => {
       oldValue = Number(value.value);
       return oldValue;
     });
-    ListClientes({ top: Number(value.value), orderBy: 'CLIENTE' });
+    console.log(RegistersPerPage * CurrentPage - RegistersPerPage);
+    ListClientes({
+      top: Number(value.value),
+      skip: RegistersPerPage * CurrentPage - RegistersPerPage,
+      orderBy: 'CLIENTE',
+    });
+  };
+
+  const GoToFirstPage = () => {
+    setCurrentPage(1);
+    ListClientes({
+      top: RegistersPerPage,
+      skip: 0,
+      orderBy: 'CLIENTE',
+    });
+  };
+
+  const GoToNextPage = () => {
+    CurrentPage < TotalPages && setCurrentPage((oldPage) => oldPage + 1);
+    ListClientes({
+      top: RegistersPerPage,
+      skip: SkipPage(),
+      orderBy: 'CLIENTE',
+    });
+  };
+
+  const GoToPrevPage = () => {
+    CurrentPage < TotalPages && setCurrentPage((oldPage) => oldPage - 1);
+
+    console.log(SkipPage(false));
+    ListClientes({
+      top: RegistersPerPage,
+      skip: SkipPage(false),
+      orderBy: 'CLIENTE',
+    });
+  };
+
+  const GoToLastPage = () => {
+    setCurrentPage(TotalPages);
+    ListClientes({
+      top: RegistersPerPage,
+      skip: SkipPage(true, TotalPages),
+      orderBy: 'CLIENTE',
+    });
   };
 
   const OnChangeInput = (e: React.ChangeEvent<HTMLInputElement>) => {
@@ -311,6 +362,10 @@ export const Clientes: React.FC = () => {
           TotalPages={TotalPages}
           RowsPerPage={RegistersPerPage}
           onChange={ChangeRowsPerPage}
+          onNextPage={GoToNextPage}
+          onFirstPage={GoToFirstPage}
+          onLastPage={GoToLastPage}
+          onPrevPage={GoToPrevPage}
         />
       )}
       {ClienteList.length === 0 && !IsLoading && ErrorMessage === '' && (

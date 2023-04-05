@@ -76,7 +76,8 @@ export const Container = styled.button<ContainerProps>`
   &[disabled],
   &:disabled {
     transition: background-color ease 0.2s;
-    background-color: ${(props) => `rgba(${HEXToRGB(props.hoverColor)},0.5)`};
+    background-color: ${(props) => `rgba(${HEXToRGB(props.hoverColor)},0.85)`};
+    cursor: not-allowed;
   }
 `;
 
