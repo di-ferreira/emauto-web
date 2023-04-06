@@ -1,9 +1,10 @@
-import React from 'react';
+import React, { Ref } from 'react';
 import Select, {
   SingleValue,
   ActionMeta,
   MenuPlacement,
   PropsValue,
+  GroupBase,
 } from 'react-select';
 import { Container, Label } from './styles';
 import { Black, Light, Secondary } from '../../colors';

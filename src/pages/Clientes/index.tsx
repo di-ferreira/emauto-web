@@ -30,8 +30,22 @@ import { InputCustom } from '../../components/InputCustom';
 import { CustomSwitch } from '../../components/CustomSwitch';
 import useClientes from '../../hooks/useClientes';
 
+interface iSearchCliente {
+  filterBy: string;
+  value: string;
+  actives: boolean;
+}
+
 export const Clientes: React.FC = () => {
   const { GetClientes } = useClientes();
+
+  const OptionsSelect: iOption[] = [
+    { label: 'NOME', value: 'NOME' },
+    { label: 'CÓDIGO', value: 'CLIENTE' },
+    { label: 'CPF/CNPJ', value: 'CIC' },
+    { label: 'BAIRRO', value: 'BAIRRO' },
+    { label: 'CIDADE', value: 'CIDADE' },
+  ];
 
   const [ClienteList, setClienteList] = useState<iCliente[]>([]);
 
@@ -41,6 +55,8 @@ export const Clientes: React.FC = () => {
   const [CurrentPage, setCurrentPage] = useState<number>(1);
 
   const [TotalPages, setTotalPages] = useState<number>(1);
+
+  const [TotalRegister, setTotalRegister] = useState<number>(1);
 
   const SkipPage = (
     NextPage: boolean = true,
@@ -58,6 +74,11 @@ export const Clientes: React.FC = () => {
   const [IsLoading, setIsLoading] = useState<boolean>(false);
 
   /* OUTROS */
+  const [SearchCliente, setSearchCliente] = useState<iSearchCliente>({
+    filterBy: OptionsSelect[0].value,
+    value: '',
+    actives: false,
+  } as iSearchCliente);
   const [cliente, setCliente] = useState<iCliente>({} as iCliente);
 
   const { Modal, showModal } = useModal();
@@ -67,20 +88,45 @@ export const Clientes: React.FC = () => {
   const [checkedSwitchFilter, setCheckedSwitchFilter] =
     useState<boolean>(false);
 
-  const OptionsSelect: iOption[] = [
-    { label: 'NOME', value: 'nome' },
-    { label: 'CÓDIGO', value: 'codigo' },
-    { label: 'CPF/CNPJ', value: 'cic' },
-    { label: 'BAIRRO', value: 'bairro' },
-    { label: 'CIDADE', value: 'cidade' },
-  ];
-
   useEffect(() => {
     ListClientes({
       top: RegistersPerPage,
       orderBy: 'CLIENTE',
     });
   }, []);
+
+  const SearchForFilter = () => {
+    console.log(SearchCliente);
+    if (SearchCliente.value !== '')
+      if (
+        SearchCliente.filterBy === 'CLIENTE' ||
+        SearchCliente.filterBy === 'CIC'
+      )
+        ListClientes({
+          top: RegistersPerPage,
+          skip: 0,
+          orderBy: 'CLIENTE',
+          filter: [
+            {
+              key: SearchCliente.filterBy as keyof iCliente,
+              value: SearchCliente.value,
+              typeSearch: 'eq',
+            },
+          ],
+        });
+      else
+        ListClientes({
+          top: RegistersPerPage,
+          skip: 0,
+          orderBy: 'CLIENTE',
+          filter: [
+            {
+              key: SearchCliente.filterBy as keyof iCliente,
+              value: SearchCliente.value,
+            },
+          ],
+        });
+  };
 
   const ListClientes = async (filter?: iFilter<iCliente>) => {
     setErrorMessage('');
@@ -89,6 +135,7 @@ export const Clientes: React.FC = () => {
       const Data = await GetClientes(filter);
       setClienteList(Data.Dados);
       setTotalPages(Math.ceil(Data.Qtd_Registros / RegistersPerPage));
+      setTotalRegister(Data.Qtd_Registros);
     } catch (error: any) {
       setErrorMessage(error.message);
     } finally {
@@ -101,7 +148,6 @@ export const Clientes: React.FC = () => {
       oldValue = Number(value.value);
       return oldValue;
     });
-    console.log(RegistersPerPage * CurrentPage - RegistersPerPage);
     ListClientes({
       top: Number(value.value),
       skip: RegistersPerPage * CurrentPage - RegistersPerPage,
@@ -129,8 +175,6 @@ export const Clientes: React.FC = () => {
 
   const GoToPrevPage = () => {
     CurrentPage < TotalPages && setCurrentPage((oldPage) => oldPage - 1);
-
-    console.log(SkipPage(false));
     ListClientes({
       top: RegistersPerPage,
       skip: SkipPage(false),
@@ -142,7 +186,7 @@ export const Clientes: React.FC = () => {
     setCurrentPage(TotalPages);
     ListClientes({
       top: RegistersPerPage,
-      skip: SkipPage(true, TotalPages),
+      skip: TotalRegister - RegistersPerPage,
       orderBy: 'CLIENTE',
     });
   };
@@ -224,18 +268,29 @@ export const Clientes: React.FC = () => {
       <FilterContainer>
         <Select
           options={OptionsSelect}
-          onChange={(SingleValue) => console.log(SingleValue)}
+          onChange={(SingleValue) =>
+            SingleValue &&
+            setSearchCliente({
+              ...SearchCliente,
+              filterBy: String(SingleValue.value),
+            })
+          }
         />
         <ContainerInput>
           <InputCustom
-            onChange={(e) => console.log(e.target.value)}
+            onChange={(e) =>
+              setSearchCliente({
+                ...SearchCliente,
+                value: e.target.value,
+              })
+            }
             placeholder='Digite sua busca'
           />
         </ContainerInput>
 
         <Button
           Icon={faSearch}
-          onclick={() => console.log('search')}
+          onclick={() => SearchForFilter()}
           Text='Buscar'
           Type='secondary'
           Title='Buscar'
@@ -246,7 +301,13 @@ export const Clientes: React.FC = () => {
             label='Ativos'
             checked={checkedSwitchFilter}
             style='secondary'
-            onClick={() => setCheckedSwitchFilter(!checkedSwitchFilter)}
+            onClick={() => {
+              setCheckedSwitchFilter(!checkedSwitchFilter);
+              setSearchCliente({
+                ...SearchCliente,
+                actives: !checkedSwitchFilter,
+              });
+            }}
           />
         </SwitchContainer>
       </FilterContainer>

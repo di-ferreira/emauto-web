@@ -13,11 +13,26 @@ interface iUseCliente {
 const ROUTE_CLIENTE = '/ClientesService/';
 
 const CreateFilter = (filter: iFilter<iCliente>): string => {
-  let ResultFilter = filter.filter
-    ? typeof filter.filter.value === 'string'
-      ? `$filter=${filter.filter.key} like %${filter.filter.value}%`
-      : `$filter=${filter.filter.key} eq ${filter.filter.value}`
-    : '';
+  let ResultFilter: string = '';
+
+  if (filter.filter) {
+    ResultFilter = '$filter=';
+    let andStr = ' and ';
+    filter.filter.map((itemFilter) => {
+      if (itemFilter.typeSearch)
+        itemFilter.typeSearch === 'like'
+          ? (ResultFilter = `${ResultFilter}${itemFilter.key} like '%${String(
+              itemFilter.value
+            ).toUpperCase()}%'${andStr}`)
+          : itemFilter.typeSearch === 'eq' &&
+            (ResultFilter = `${ResultFilter}${itemFilter.key} eq '${itemFilter.value}'${andStr}`);
+      else
+        ResultFilter = `${ResultFilter}${itemFilter.key} like '%${String(
+          itemFilter.value
+        ).toUpperCase()}%'${andStr}`;
+    });
+    ResultFilter = ResultFilter.slice(0, -andStr.length);
+  }
 
   let ResultOrderBy = filter.orderBy ? `&$orderby=${filter.orderBy}` : '';
 
@@ -39,7 +54,6 @@ const GetClientes = async (
       filter ? `${CreateFilter(filter)}&` : '?'
     }$expand=Telefones`
   );
-  console.log(response);
   return response.data;
 };
 

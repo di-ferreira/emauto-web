@@ -43,7 +43,11 @@ export interface iTableProps<T> extends iTablePagination {
 }
 
 export interface iFilter<T> {
-  filter?: { key: keyof T; value: string | number };
+  filter?: {
+    key: keyof T;
+    value: string | number;
+    typeSearch?: 'eq' | 'like';
+  }[];
   orderBy?: keyof T;
   top?: number;
   skip?: number;
