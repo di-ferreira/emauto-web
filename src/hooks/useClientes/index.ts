@@ -15,7 +15,7 @@ const ROUTE_CLIENTE = '/ClientesService/';
 const CreateFilter = (filter: iFilter<iCliente>): string => {
   let ResultFilter: string = '';
 
-  if (filter.filter) {
+  if (filter.filter && filter.filter.length >= 1) {
     ResultFilter = '$filter=';
     let andStr = ' and ';
     filter.filter.map((itemFilter) => {

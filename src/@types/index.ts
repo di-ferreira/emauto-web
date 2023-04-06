@@ -42,12 +42,14 @@ export interface iTableProps<T> extends iTablePagination {
   columns: iColumnType<T>[];
 }
 
+export interface iFilterQuery<T> {
+  key: keyof T;
+  value: string | number;
+  typeSearch?: 'eq' | 'like';
+}
+
 export interface iFilter<T> {
-  filter?: {
-    key: keyof T;
-    value: string | number;
-    typeSearch?: 'eq' | 'like';
-  }[];
+  filter?: iFilterQuery<T>[];
   orderBy?: keyof T;
   top?: number;
   skip?: number;

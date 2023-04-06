@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { iCliente, iColumnType, iFilter, iOption } from '../../@types';
+import {
+  iCliente,
+  iColumnType,
+  iFilter,
+  iFilterQuery,
+  iOption,
+} from '../../@types';
 import Table from '../../components/Table';
 import {
   Container,
@@ -95,37 +101,55 @@ export const Clientes: React.FC = () => {
     });
   }, []);
 
+  const RenderIconBloqueado = (value: string): JSX.Element => {
+    if (value === 'S') return <Icon Icon={faBan} Type='danger' key={value} />;
+    return <Icon Icon={faCheck} Type='success' key={value} />;
+  };
+
+  const MountQueryFilter = (
+    filter: iSearchCliente
+  ): iFilterQuery<iCliente>[] => {
+    let listFilter: iFilterQuery<iCliente>[] = [];
+
+    if (filter.value !== '') {
+      if (filter.filterBy === 'CLIENTE' || filter.filterBy === 'CIC')
+        listFilter = [
+          {
+            key: SearchCliente.filterBy as keyof iCliente,
+            value: SearchCliente.value,
+            typeSearch: 'eq',
+          },
+        ];
+      else
+        listFilter = [
+          {
+            key: SearchCliente.filterBy as keyof iCliente,
+            value: SearchCliente.value,
+          },
+        ];
+
+      if (filter.actives)
+        listFilter = [
+          ...listFilter,
+          {
+            key: 'BLOQUEADO',
+            value: 'N',
+            typeSearch: 'eq',
+          },
+        ];
+    }
+    return listFilter;
+  };
+
   const SearchForFilter = () => {
     console.log(SearchCliente);
-    if (SearchCliente.value !== '')
-      if (
-        SearchCliente.filterBy === 'CLIENTE' ||
-        SearchCliente.filterBy === 'CIC'
-      )
-        ListClientes({
-          top: RegistersPerPage,
-          skip: 0,
-          orderBy: 'CLIENTE',
-          filter: [
-            {
-              key: SearchCliente.filterBy as keyof iCliente,
-              value: SearchCliente.value,
-              typeSearch: 'eq',
-            },
-          ],
-        });
-      else
-        ListClientes({
-          top: RegistersPerPage,
-          skip: 0,
-          orderBy: 'CLIENTE',
-          filter: [
-            {
-              key: SearchCliente.filterBy as keyof iCliente,
-              value: SearchCliente.value,
-            },
-          ],
-        });
+
+    ListClientes({
+      top: RegistersPerPage,
+      skip: 0,
+      orderBy: 'CLIENTE',
+      filter: MountQueryFilter(SearchCliente),
+    });
   };
 
   const ListClientes = async (filter?: iFilter<iCliente>) => {
@@ -148,10 +172,12 @@ export const Clientes: React.FC = () => {
       oldValue = Number(value.value);
       return oldValue;
     });
+
     ListClientes({
       top: Number(value.value),
       skip: RegistersPerPage * CurrentPage - RegistersPerPage,
       orderBy: 'CLIENTE',
+      filter: MountQueryFilter(SearchCliente),
     });
   };
 
@@ -161,6 +187,7 @@ export const Clientes: React.FC = () => {
       top: RegistersPerPage,
       skip: 0,
       orderBy: 'CLIENTE',
+      filter: MountQueryFilter(SearchCliente),
     });
   };
 
@@ -170,6 +197,7 @@ export const Clientes: React.FC = () => {
       top: RegistersPerPage,
       skip: SkipPage(),
       orderBy: 'CLIENTE',
+      filter: MountQueryFilter(SearchCliente),
     });
   };
 
@@ -179,6 +207,7 @@ export const Clientes: React.FC = () => {
       top: RegistersPerPage,
       skip: SkipPage(false),
       orderBy: 'CLIENTE',
+      filter: MountQueryFilter(SearchCliente),
     });
   };
 
@@ -188,6 +217,7 @@ export const Clientes: React.FC = () => {
       top: RegistersPerPage,
       skip: TotalRegister - RegistersPerPage,
       orderBy: 'CLIENTE',
+      filter: MountQueryFilter(SearchCliente),
     });
   };
 
@@ -214,6 +244,13 @@ export const Clientes: React.FC = () => {
       key: 'NOME',
       title: 'NOME',
       width: 200,
+    },
+    {
+      key: 'BLOQUEADO',
+      title: 'BLOQUEADO',
+      width: 200,
+      render: (_, item) =>
+        item.BLOQUEADO && <>{RenderIconBloqueado(String(item.BLOQUEADO))}</>,
     },
     {
       key: 'CIC',
