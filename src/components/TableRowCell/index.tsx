@@ -16,7 +16,7 @@ export function TableRowCell<T>({
   return (
     <>
       {!column.isHideMobile && (
-        <TableCell>
+        <TableCell style={{ width: column.width }}>
           {column.action ? (
             <ActionContainer>
               {column.action.map((button, i) => (

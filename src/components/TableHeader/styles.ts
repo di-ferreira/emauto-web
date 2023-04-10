@@ -8,7 +8,7 @@ export const TableHeaderCell = styled.th`
   text-align: center;
   font-size: 1.4rem;
   padding: 1.2rem;
-  min-width: 12rem;
+  width: 100%;
   color: ${(props) => props.theme.colors.gray};
   border-bottom: solid 1px ${(props) => props.theme.colors.secondary};
 `;
